@@ -13,6 +13,21 @@ Telegram::Bot::Client.run(token) do |bot|
       user = User.find_by(telegram_id: message.from.id)
     end
 
+    case user.step
+    when 'add'
+      user.bots.create(username: message.text)
+      user.step = 'description'
+      user.save
+    when 'description'  
+      new_bot user.bots.last
+      new_bot.description = messag.text 
+      new_bot.save
+      user.step = nil
+      user.save
+    when 'delete'
+    when 'search' 
+    end
+
     case message.text
     when "/add"
       user.step = 'add'
