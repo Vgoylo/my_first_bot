@@ -6,11 +6,11 @@ token = '1960253759:AAEaqU6RavaQ0kHMqopHSn5DhrV1oEaR2Bc'
 
 Telegram::Bot::Client.run(token) do |bot|
   bot.listen do |message|
-
-    if !User.exists?(telegram_id: message.from.id)
-      user = User.create(telegram_id: message.from.id, name: message.from.first_name)
-    else 
+    if User.exists?(telegram_id: message.from.id)
       user = User.find_by(telegram_id: message.from.id)
+      
+    else 
+      user = User.create(telegram_id: message.from.id, name: message.from.first_name)
     end
 
     case user.step
@@ -18,10 +18,12 @@ Telegram::Bot::Client.run(token) do |bot|
       user.bots.create(username: message.text)
       user.step = 'description'
       user.save
+      bot.api.send_message(chat_id: message.chat.id, text: 'Send me bot description')
     when 'description'  
-      new_bot user.bots.last
-      new_bot.description = messag.text 
+      new_bot = user.bots.last
+      new_bot.description = message.text 
       new_bot.save
+      bot.api.send_message(chat_id: message.chat.id, text: 'Thank you , I saved your bot')
       user.step = nil
       user.save
     when 'delete'
@@ -41,6 +43,8 @@ Telegram::Bot::Client.run(token) do |bot|
       user.step = 'search'  
       user.save
       bot.api.send_message(chat_id: message.chat.id, text: 'Send me your request')
+    else
+      bot.api.send_message(chat_id: message.chat.id, text: 'incorrect message')
     end  
   end
 end
