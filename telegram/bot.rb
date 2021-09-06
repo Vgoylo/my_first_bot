@@ -10,12 +10,16 @@ Telegram::Bot::Client.run(token) do |bot|
     input = message.text 
     case input 
     when '/start'
-      bot.api.send_message(chat_id: message.chat.id, text: 'Hi how are you?')
+      bot.api.send_message(chat_id: message.chat.id, text: 'Hi how are you?') 
     when'good'
       bot.api.send_message(chat_id: message.chat.id, text: '☺️')
     when 'bad' 
-      url = 'https://www.cnet.com/a/img/-qQkzFVyOPEoBRS7K5kKS0GFDvk=/940x0/2020/04/16/7d6d8ed2-e10c-4f91-b2dd-74fae951c6d8/bazaart-edit-app.jpg'
+
+      url = "https://loremflickr.com/320/240/#{SecureRandom.random_number(10000)}"
+      
       bot.api.send_photo(chat_id: message.chat.id, photo: url, caption: 'test')
+     
     end
   end
 end
+ 
